@@ -1,1 +1,23 @@
 @import "tailwindcss";
+@tailwind utilities;
+
+/* Apply Sora to the whole body */
+
+
+body {
+  font-family: 'Sora', sans-serif;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(40%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(10%);
+  }
+}
+
+
+

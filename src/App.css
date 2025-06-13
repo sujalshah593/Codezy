@@ -1,1 +1,196 @@
 @import "tailwindcss";
+
+
+/* Apply Sora to the whole body */
+body {
+  font-family: 'Sora', sans-serif;
+}
+        
+/* From Uiverse.io by Mike11jr */ 
+.btn {
+ width: 130px;
+ height: 40px;
+ font-size: 1.1em;
+ cursor: pointer;
+ background-color: red;
+ color: #fff;
+ border: none;
+ border-radius: 5px;
+ transition: all .4s;
+}
+
+.btn:hover {
+ border-radius: 5px;
+ transform: translateY(-10px);
+ box-shadow: 0 7px 0 -2px black,
+  0 15px 0 -4px #39a2db,
+  0 16px 10px -3px #39a2db;
+}
+
+.btn:active {
+ transition: all 0.2s;
+ transform: translateY(-5px);
+ box-shadow: 0 2px 0 -2px #f85959,
+  0 8px 0 -4px #39a2db,
+  0 12px 10px -3px #39a2db;
+}
+
+/* for menu*/
+/* From Uiverse.io by vk-uiux */ 
+#checkbox {
+  display: none;
+}
+
+.toggle {
+  position: relative;
+  width: 24px;    /* Slightly wider for clarity */
+  height: 20px;   /* Adjusted height */
+  cursor: pointer;
+  margin: auto;
+  display: block;
+}
+
+.bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;            /* Slimmer bars */
+  border-radius: 1.5px;   /* Half of height for rounded edges */
+  background: #4e4d4d;
+  opacity: 1;
+  transition: all 0.35s cubic-bezier(.5, -0.35, .35, 1.5);
+}
+
+/* Positioning the 3 bars */
+
+.bar--top {
+  top: 0;
+  transition-property: top, transform;
+}
+
+.bar--middle {
+  top: 50%;
+  transform: translateY(-50%);
+  transition-property: opacity, transform;
+}
+
+.bar--bottom {
+  bottom: 0;
+  transition-property: bottom, transform;
+}
+
+/* When checked - transform into "X" */
+
+.toggle--active .bar--top {
+  transform: translateY(9px) rotate(45deg);
+}
+
+.toggle--active .bar--middle {
+  opacity: 0;
+}
+
+.toggle--active .bar--bottom {
+  transform: translateY(-9px) rotate(-45deg);
+}
+
+/* //for likedvideos page */
+
+/* From Uiverse.io by vinodjangid07 */ 
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  background-color: #ff004c;
+  border: 8px solid #f7b4d1;
+  color: white;
+  gap: 8px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.text {
+  font-size: 1em;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.svg {
+  padding-top: 5px;
+  height: 100%;
+  width: fit-content;
+}
+.svg svg {
+  width: 30px;
+  height: 30px;
+}
+.button:hover {
+  border: 8px solid #f78fb7;
+  background-color: #fb0404;
+}
+.button:active {
+  border: 5px solid #c0dfff;
+}
+.button:hover .svg svg {
+  animation: jello-vertical 0.9s both;
+  transform-origin: left;
+}
+
+@keyframes jello-vertical {
+  0% {
+    transform: scale3d(1, 1, 1);
+  }
+  30% {
+    transform: scale3d(0.75, 1.25, 1);
+  }
+  40% {
+    transform: scale3d(1.25, 0.75, 1);
+  }
+  50% {
+    transform: scale3d(0.85, 1.15, 1);
+  }
+  65% {
+    transform: scale3d(1.05, 0.95, 1);
+  }
+  75% {
+    transform: scale3d(0.95, 1.05, 1);
+  }
+  100% {
+    transform: scale3d(1, 1, 1);
+  }
+}
+
+/* for scroll bar */
+
+/* For Webkit browsers like Chrome, Edge, Safari */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;   /* vertical scrollbar */
+  height: 3px;  /* horizontal scrollbar */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #d32f2f;
+  border-radius: 100vh;
+  border: 2px solid #f0f0f0;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #b71c1c;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+
