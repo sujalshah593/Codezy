@@ -133,14 +133,15 @@ function VideoDetail() {
       <div className="w-full md:w-64 lg:w-96">
         <h3 className="font-semibold mb-3 text-lg">More Videos</h3>
         <div className="flex flex-col space-y-4 overflow-y-auto overflow-x-hidden max-h-[70vh] md:max-h-[640px] pb-2 pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
-          {allVideos
-            .filter((v) => v.id.toString() !== id)
-            .slice(0, 10)
-            .map((v) => (
-              <div key={v.id} className="w-full flex-shrink-0">
-                <VideoCard video={v} />
-              </div>
-            ))}
+          {[...allVideos]
+          .filter((v) => v.id.toString() !== id)
+          .sort(() => Math.random() - 0.5)
+          .slice(0,10)
+          .map((v) => (
+            <div key={v.id} className="w-full flex-shrink-0">
+              <VideoCard video={v}/>
+            </div>
+          ))}
         </div>
       </div>
 

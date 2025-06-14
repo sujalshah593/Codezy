@@ -1,5 +1,5 @@
 import React from "react";
-import sujal from "../src/assets/sujal.jpg";
+import sujal from '../assets/sujal.jpg';
 
 function About() {
   return (

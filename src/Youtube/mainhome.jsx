@@ -17,13 +17,13 @@ import { useLocation } from "react-router-dom";
 import videos from "./Webvideos";
 import Cybervideos from "./Cybervideos";
 import GeneralVideos from "./Generalvideos";
-import cyber from "../src/assets/cyber.jpg";
+import cyber from "../assets/cyber.jpg";
 import Onevideos from "./One";
-import cp from "../src/assets/cp.png";
-import web from "../src/assets/web.png";
-import figma from "../src/assets/figma.png";
-import oneshot from "../src/assets/oneshot.png";
-import dsa from "../src/assets/dsa.png";
+import cp from "../assets/cp.png";
+import web from "../assets/web.png";
+import figma from "../assets/figma.png";
+import oneshot from "../assets/oneshot.png";
+import dsa from "../assets/dsa.png";
 import UiVideos from "./uivideos";
 import { FaInfoCircle } from "react-icons/fa";
 import CpVideos from "./cp";
@@ -51,8 +51,10 @@ const drawerItemsBottom = [
 export default function YouTubeNavbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const desktopSearchRef = useRef(null);
   const [drawerOpen, setDrawerOpen] = useState(true);
   const [drawerExpanded, setDrawerExpanded] = useState(false);
+  const searchRef = useRef(null);
   const [activeItem, setActiveItem] = useState("home");
   const [menuOpen, setMenuOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(20); // Initial visible count for videos
@@ -107,6 +109,19 @@ export default function YouTubeNavbar() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  //UseEffect to detect outside clicks
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const navigate = useNavigate();
 
   const handleCategoryClick = (category) => {
@@ -143,7 +158,24 @@ export default function YouTubeNavbar() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [drawerOpen, isMobile]);
+  });
+
+  // for desktop search suggestions
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        desktopSearchRef.current &&
+        !desktopSearchRef.current.contains(event.target)
+      ) {
+        setSearch(""); // or set a state like setShowSuggestions(false) if you use one
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   // Handle hamburger menu click
   const onMenuClick = () => {
@@ -197,13 +229,20 @@ export default function YouTubeNavbar() {
     if (id === "Channel3") {
       navigate("/category/competitiveprogramming");
     }
-    if ( id === "Channel5" ) {
-      navigate("/category/oneshot")
+    if (id === "Channel5") {
+      navigate("/category/oneshot");
     }
-    if ( id === "Channel6" ) { 
-      navigate("/category/dsa")
+    if (id === "Channel6") {
+      navigate("/category/dsa");
     }
   };
+  useEffect(() => {
+    if (isOpen && isMobile) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+  }, [isOpen, isMobile]);
 
   const currentDrawerWidth = drawerExpanded
     ? drawerFullWidth
@@ -212,9 +251,11 @@ export default function YouTubeNavbar() {
   return (
     <>
       {/* Navbar */}
-      <nav className="fixed font-sora justify-between border-b border-b-gray-100 top-0 left-0 right-0 h-16 bg-white flex items-center px-4  z-50">
-        <div className="flex items-center gap-9">
-          <div id="menuToggle">
+      <nav className="fixed font-sora border-b border-b-gray-100 top-0 left-0 right-0 h-16 bg-white flex items-center px-4 z-50">
+        <div className="flex items-center justify-between w-full">
+          {/* 🔴 LEFT: Logo + Hamburger */}
+          <div className="flex items-center gap-3">
+            {/* Hamburger Button */}
             <button
               id="menu-button"
               aria-label="Toggle menu"
@@ -225,72 +266,46 @@ export default function YouTubeNavbar() {
               <div className="bar bar--middle"></div>
               <div className="bar bar--bottom"></div>
             </button>
+
+            {/* Logo */}
+            {!isMobile || !isOpen ? (
+              <h1
+                className="text-2xl font-bold"
+                style={{
+                  fontFamily: "Poppins, sans-serif",
+                  color: "#E53935",
+                }}
+              >
+                Code<span style={{ color: "#212121" }}>zy</span>
+              </h1>
+            ) : null}
           </div>
 
-          <h1
-            style={{
-              fontFamily: "Poppins, sans-serif",
-              fontSize: "1.8rem",
-              fontWeight: "700",
-              color: "#E53935", // Red tone
-            }}
-          >
-            Code<span style={{ color: "#212121" }}>zy</span>
-          </h1>
-        </div>
-        <form
-          onSubmit={(e) => e.preventDefault()}
-          className="hidden md:flex flex-grow max-w-96 mx-4"
-        >
-          <input
-            type="text"
-            placeholder="Search..."
-            onFocus={openSearch}
-            className="flex-grow border  border-gray-100 rounded-l-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-600"
-          />
-          <button
-            type="submit"
-            className="bg-white border border-gray-100  rounded-r-full px-3 py-2 "
-          >
-            <FaSearch />
-          </button>
-        </form>
-
-        {/* Always show icon on all screens, but use only on mobile */}
-        <button
-          onClick={openSearch}
-          className="md:hidden text-xl text-gray-700 p-2"
-          aria-label="Open search"
-        >
-          <FaSearch />
-        </button>
-
-        {/* Overlay search when icon clicked (mobile) */}
-        {isOpen && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
-            onClick={closeSearch}
-          >
-            <div
-              className="relative w-11/12 max-w-md"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center bg-white rounded-full p-2">
+          {/* 🟢 CENTER: Desktop Search */}
+          <div className="hidden md:flex flex-grow justify-center">
+            <div className="relative w-full max-w-md">
+              <form
+                onSubmit={(e) => e.preventDefault()}
+                className="flex w-full"
+              >
                 <input
                   type="text"
-                  autoFocus
-                  placeholder="Search..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="flex-grow px-4 py-2 rounded-l-full focus:outline-none"
+                  placeholder="Search..."
+                  onFocus={openSearch}
+                  className="flex-grow border border-gray-100 rounded-l-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-600"
                 />
-                <button className="text-gray-500 px-4 py-2">
+                <button
+                  type="submit"
+                  className="bg-white border border-gray-100 rounded-r-full px-3 py-2"
+                >
                   <FaSearch />
                 </button>
-              </div>
+              </form>
 
               {search && filteredSuggestions.length > 0 && (
-                <ul className="absolute custom-scrollbar left-0 right-0 mt-2 border bg-white rounded-md shadow max-h-60 overflow-y-auto z-10">
+                <ul className="absolute left-0 w-full mt-1 border bg-white rounded-md shadow max-h-60 overflow-y-auto z-10">
                   {filteredSuggestions.slice(0, 35).map((video) => (
                     <li
                       key={video.id}
@@ -304,13 +319,50 @@ export default function YouTubeNavbar() {
               )}
             </div>
           </div>
-        )}
+
+          {/* 🔵 RIGHT: Mobile Search Logic */}
+          <div className="md:hidden flex-grow flex justify-end">
+            {!isOpen ? (
+              <button
+                onClick={() => setIsOpen(true)}
+                className="text-xl text-gray-700 p-2"
+                aria-label="Open search"
+              >
+                <FaSearch />
+              </button>
+            ) : (
+              <input
+                type="text"
+                autoFocus
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search..."
+                className="w-full max-w-[80vw] border rounded-full px-4 py-1 focus:outline-none focus:ring-2 focus:ring-red-600"
+                onBlur={() => setTimeout(() => setIsOpen(false), 200)} // Optional: close on blur
+              />
+            )}
+
+            {search && filteredSuggestions.length > 0 && (
+              <ul className="absolute custom-scrollbar left-0 right-0 top-16 border bg-white rounded-md shadow max-h-200 overflow-y-auto z-10">
+                {filteredSuggestions.slice(0, 35).map((video) => (
+                  <li
+                    key={video.id}
+                    className="px-4 py-3 hover:bg-gray-100 cursor-pointer text-sm"
+                    onClick={() => handleSelect(video.id)}
+                  >
+                    {video.title}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
       </nav>
 
       {/* Drawer */}
       <aside
         ref={drawerRef}
-        className={`fixed bg-white border-r border-r-gray-100 overflow-auto z-40 mt-3  transition-transform duration-300 ease-in-out
+        className={`fixed bg-white border-r border-r-gray-100 overflow-auto z-40   transition-transform duration-300 ease-in-out
             ${
               isMobile
                 ? "top-14 left-0 w-full h-[calc(100vh-56px)]"
