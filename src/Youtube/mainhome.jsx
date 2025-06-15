@@ -7,6 +7,8 @@ import {
   FaClock,
   FaThumbsUp,
 } from "react-icons/fa";
+import { IoHomeOutline } from "react-icons/io5";
+import { IoIosInformationCircleOutline } from "react-icons/io";
 import { BsArrowRight } from "react-icons/bs";
 import { IoMenu } from "react-icons/io5";
 import "./utility.css";
@@ -26,6 +28,8 @@ import oneshot from "../assets/oneshot.png";
 import dsa from "../assets/dsa.png";
 import UiVideos from "./uivideos";
 import { FaInfoCircle } from "react-icons/fa";
+import { MdOutlineWatchLater } from "react-icons/md";
+import { FaRegThumbsUp } from "react-icons/fa";
 import CpVideos from "./cp";
 import DsaVideos from "./dsa";
 
@@ -33,10 +37,10 @@ const drawerFullWidth = 240;
 const drawerCollapsedWidth = 72;
 
 const drawerItemsTop = [
-  { id: "home", text: "Home", icon: <FaHome /> },
-  { id: "about", text: "About", icon: <FaInfoCircle /> },
-  { id: "watch_later", text: "Watch Later", icon: <FaClock /> },
-  { id: "liked", text: "Liked Videos", icon: <FaThumbsUp /> },
+  { id: "home", text: "Home", icon: <IoHomeOutline /> },
+  { id: "about", text: "About", icon: <IoIosInformationCircleOutline /> },
+  { id: "watch_later", text: "Watch Later", icon: <MdOutlineWatchLater /> },
+  { id: "liked", text: "Liked Videos", icon: <FaRegThumbsUp /> },
 ];
 
 const drawerItemsBottom = [
@@ -78,6 +82,8 @@ export default function YouTubeNavbar() {
   const handleSeeMore = () => {
     setVisibleCount((prev) => prev + 30);
   };
+
+  // For Loader
 
   // Normalize category from URL
   const slug = category?.toLowerCase().replace(/\s+/g, "");
@@ -236,6 +242,24 @@ export default function YouTubeNavbar() {
       navigate("/category/dsa");
     }
   };
+
+  const highlightMatch = (text, query) => {
+    if (!query) return text;
+
+    const regex = new RegExp(`(${query})`, "gi");
+    const parts = text.split(regex);
+
+    return parts.map((part, index) =>
+      part.toLowerCase() === query.toLowerCase() ? (
+        <mark key={index} className="bg-yellow-200 text-black font-semibold">
+          {part}
+        </mark>
+      ) : (
+        <span key={index}>{part}</span>
+      )
+    );
+  };
+
   useEffect(() => {
     if (isOpen && isMobile) {
       document.body.style.overflow = "hidden";
@@ -251,10 +275,10 @@ export default function YouTubeNavbar() {
   return (
     <>
       {/* Navbar */}
-      <nav className="fixed font-sora border-b border-b-gray-100 top-0 left-0 right-0 h-16 bg-white flex items-center px-4 z-50">
+      <nav className="fixed font-sora border-b border-b-gray-100  top-0 left-0 right-0 h-16 bg-white flex items-center px-4 z-50">
         <div className="flex items-center justify-between w-full">
-          {/* 🔴 LEFT: Logo + Hamburger */}
-          <div className="flex items-center gap-3">
+          {/*  LEFT: Logo + Hamburger */}
+          <div className="flex items-center gap-5">
             {/* Hamburger Button */}
             <button
               id="menu-button"
@@ -270,7 +294,7 @@ export default function YouTubeNavbar() {
             {/* Logo */}
             {!isMobile || !isOpen ? (
               <h1
-                className="text-2xl font-bold"
+                className="text-2xl hover:cursor-pointer font-bold hover:scale-105 transition-transform duration-300"
                 style={{
                   fontFamily: "Poppins, sans-serif",
                   color: "#E53935",
@@ -281,38 +305,35 @@ export default function YouTubeNavbar() {
             ) : null}
           </div>
 
-          {/* 🟢 CENTER: Desktop Search */}
-          <div className="hidden md:flex flex-grow justify-center">
-            <div className="relative w-full max-w-md">
-              <form
-                onSubmit={(e) => e.preventDefault()}
-                className="flex w-full"
-              >
+          {/* CENTER: Desktop Search */}
+          <div
+            className="hidden md:flex flex-grow justify-center"
+            ref={desktopSearchRef}
+          >
+            <div className="relative w-full max-w-md left-[-70px]">
+              <form onSubmit={(e) => e.preventDefault()} className="w-full">
+                {/* Icon inside input */}
+                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+
                 <input
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search..."
                   onFocus={openSearch}
-                  className="flex-grow border border-gray-100 rounded-l-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-600"
+                  className="w-xl   pl-10 pr-4 py-2 border border-gray-100 rounded-full focus:ring-2 focus:ring-red-500 focus:outline-none"
                 />
-                <button
-                  type="submit"
-                  className="bg-white border border-gray-100 rounded-r-full px-3 py-2"
-                >
-                  <FaSearch />
-                </button>
               </form>
 
               {search && filteredSuggestions.length > 0 && (
-                <ul className="absolute left-0 w-full mt-1 border bg-white rounded-md shadow max-h-60 overflow-y-auto z-10">
+                <ul className="absolute left-0 w-xl mt-1  bg-white  shadow max-h-120 overflow-y-auto z-10">
                   {filteredSuggestions.slice(0, 35).map((video) => (
                     <li
                       key={video.id}
                       className="px-4 py-3 hover:bg-gray-100 cursor-pointer text-sm"
                       onClick={() => handleSelect(video.id)}
                     >
-                      {video.title}
+                      {highlightMatch(video.title, search)}
                     </li>
                   ))}
                 </ul>
@@ -320,8 +341,11 @@ export default function YouTubeNavbar() {
             </div>
           </div>
 
-          {/* 🔵 RIGHT: Mobile Search Logic */}
-          <div className="md:hidden flex-grow flex justify-end">
+          {/*  RIGHT: Mobile Search Logic */}
+          <div
+            className="md:hidden flex-grow flex justify-end relative"
+            ref={desktopSearchRef}
+          >
             {!isOpen ? (
               <button
                 onClick={() => setIsOpen(true)}
@@ -331,26 +355,41 @@ export default function YouTubeNavbar() {
                 <FaSearch />
               </button>
             ) : (
-              <input
-                type="text"
-                autoFocus
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search..."
-                className="w-full max-w-[80vw] border rounded-full px-4 py-1 focus:outline-none focus:ring-2 focus:ring-red-600"
-                onBlur={() => setTimeout(() => setIsOpen(false), 200)} // Optional: close on blur
-              />
+              <div className="flex items-center w-full max-w-[80vw] bg-white border rounded-full px-3 py-1 focus-within:ring-2 focus-within:ring-red-600">
+                <FaSearch className="text-gray-400 mr-2" />
+                <input
+                  type="text"
+                  autoFocus
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search..."
+                  className="flex-grow focus:outline-none"
+                />
+                {search && (
+                  <button
+                    onClick={() => {
+                      setSearch("");
+                      setIsOpen(false); // close search box
+                    }}
+                    className="text-gray-500 hover:text-red-500 ml-2"
+                    aria-label="Clear search"
+                  >
+                    ✖
+                  </button>
+                )}
+              </div>
             )}
 
+            {/* Suggestion List */}
             {search && filteredSuggestions.length > 0 && (
-              <ul className="absolute custom-scrollbar left-0 right-0 top-16 border bg-white rounded-md shadow max-h-200 overflow-y-auto z-10">
+              <ul className="absolute custom-scrollbar left-[-25px] right-0 top-9 border bg-white rounded-md shadow max-h-200 overflow-y-auto z-10">
                 {filteredSuggestions.slice(0, 35).map((video) => (
                   <li
                     key={video.id}
                     className="px-4 py-3 hover:bg-gray-100 cursor-pointer text-sm"
                     onClick={() => handleSelect(video.id)}
                   >
-                    {video.title}
+                    {highlightMatch(video.title, search)}
                   </li>
                 ))}
               </ul>
@@ -387,7 +426,7 @@ export default function YouTubeNavbar() {
                   className={`group flex items-center gap-4 px-4 py-3 w-full hover:cursor-pointer text-left transition-colors
           ${
             activeItem === id
-              ? "bg-gray-200 font-semibold text-red-600"
+              ? "bg-gradient-to-r from-red-100 to-pink-100 text-red-600 font-bold"
               : "text-gray-800 hover:bg-gray-100"
           }
         `}
@@ -397,12 +436,14 @@ export default function YouTubeNavbar() {
                       drawerExpanded || isMobile ? "flex-start" : "center",
                   }}
                 >
-                  <span className="text-lg">{icon}</span>
+                  <span className="text-xl group-hover:text-red-500 transition">
+                    {icon}
+                  </span>
 
                   {(drawerExpanded || isMobile) && (
                     <>
                       <span className="flex-1">{text}</span>
-                      <span className="opacity-0 translate-x-[-4px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                      <span className="opacity-0 group-hover:opacity-100 transform group-hover:translate-x-1 transition">
                         <BsArrowRight />
                       </span>
                     </>
@@ -469,23 +510,24 @@ export default function YouTubeNavbar() {
         <div className="p-6  ">
           {(pathname === "/" || pathname.startsWith("/category")) &&
             !pathname.startsWith("/video/") && (
-              <div className="w-full overflow-x-auto whitespace-nowrap flex gap-4  scrollbar-hide">
-                <div className="overflow-x-auto p-2 whitespace-nowrap flex scrollbar-hide gap-4 ">
+              <div className="w-full overflow-x-auto whitespace-nowrap flex gap-4  scrollbar-hide custom-scrollbar">
+                <div className="overflow-x-auto p-2 whitespace-nowrap flex scrollbar-hide gap-4 custom-scrollbar ">
                   <button
                     onClick={() => handleCategoryClick("Web Development")}
-                    className="lg:bg-gray-200 lg:text-black text-white bg-red-500 px-3 hover:bg-red-500  hover:text-white py-1 mt-2 mb-2   rounded-lg hover:cursor-pointer hover:scale-105 transition hover:shadow-lg hover:shadow-gray-400"
+                    className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-1 rounded-lg hover:cursor-pointer shadow-md hover:scale-105 hover:shadow-lg transition"
                   >
                     Web Development
                   </button>
+
                   <button
                     onClick={() => handleCategoryClick("Cyber Security")}
-                    className="lg:bg-gray-200 lg:text-black text-white bg-red-500 px-3 py-1  mt-2 mb-2 rounded-lg hover:bg-red-500 hover:text-white hover:cursor-pointer  hover:scale-105 transition hover:shadow-lg hover:shadow-gray-400"
+                    className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-1 rounded-lg hover:cursor-pointer shadow-md hover:scale-105 hover:shadow-lg transition    "
                   >
                     Cyber Security
                   </button>
                   <button
                     onClick={() => handleCategoryClick("UI-UX")}
-                    className="lg:bg-gray-200 lg:text-black text-white bg-red-500  px-3 py-1  mt-2 mb-2  rounded-lg hover:bg-red-500 hover:text-white hover:cursor-pointer hover:scale-105 transition hover:shadow-lg hover:shadow-gray-400"
+                    className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-1 rounded-lg hover:cursor-pointer shadow-md hover:scale-105 hover:shadow-lg transition"
                   >
                     UI/UX
                   </button>
@@ -493,19 +535,19 @@ export default function YouTubeNavbar() {
                     onClick={() =>
                       handleCategoryClick("Competitive Programming")
                     }
-                    className="lg:bg-gray-200 lg:text-black text-white bg-red-500 px-3 py-1  hover:bg-red-500 hover:text-white mt-2 mb-2  rounded-lg  hover:cursor-pointer  hover:scale-105 transition hover:shadow-lg hover:shadow-gray-400"
+                    className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-1 rounded-lg hover:cursor-pointer shadow-md hover:scale-105 hover:shadow-lg transition"
                   >
                     Competitive Programming
                   </button>
                   <button
                     onClick={() => handleCategoryClick("One Shot")}
-                    className="lg:bg-gray-200 lg:text-black text-white bg-red-500 px-3 py-1 hover:bg-red-500 hover:text-white  mt-2 mb-2  rounded-lg  hover:cursor-pointer  hover:scale-105 transition hover:shadow-lg hover:shadow-gray-400"
+                    className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-1 rounded-lg hover:cursor-pointer shadow-md hover:scale-105 hover:shadow-lg transition"
                   >
                     One Shots
                   </button>
                   <button
                     onClick={() => handleCategoryClick("DSA")}
-                    className="lg:bg-gray-200 lg:text-black text-white bg-red-500 px-3 py-1 hover:bg-red-500 hover:text-white  mt-2 mb-2  rounded-lg  hover:cursor-pointer  hover:scale-105 transition hover:shadow-lg hover:shadow-gray-400"
+                    className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-1 rounded-lg hover:cursor-pointer shadow-md hover:scale-105 hover:shadow-lg transition"
                   >
                     DSA
                   </button>

@@ -1,7 +1,8 @@
-import React from "react";
 import sujal from '../assets/sujal.jpg';
 
+
 function About() {
+
   return (
     <div className="px-4 sm:px-6 md:px-8 lg:px-10 py-6 max-w-7xl mx-auto">
       {/* Title Section */}
