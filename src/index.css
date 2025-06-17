@@ -4,6 +4,10 @@
 /* Apply Sora to the whole body */
 
 
+*{
+  box-sizing: border-box;
+}
+
 body {
   font-family: 'Sora', sans-serif;
 }
