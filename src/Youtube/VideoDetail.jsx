@@ -1,30 +1,30 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useParams, useNavigate } from "react-router-dom"
-import VideoCard from "./VideoCard"
-import { FaThumbsUp } from "react-icons/fa"
-import { MdOutlineWatchLater } from "react-icons/md"
-import { ImCross } from "react-icons/im"
-import { useLiked } from "./LikedContext"
-import { useWatch } from "./WatchContext"
+import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import VideoCard from "./VideoCard";
+import { FaThumbsUp } from "react-icons/fa";
+import { MdOutlineWatchLater } from "react-icons/md";
+import { ImCross } from "react-icons/im";
+import { useLiked } from "./LikedContext";
+import { useWatch } from "./WatchContext";
 
-import webDevVideos from "./Webvideos"
-import Cybervideos from "./Cybervideos"
-import GeneralVideos from "./Generalvideos"
-import Onevideos from "./One"
-import UiVideos from "./uivideos"
-import CpVideos from "./cp"
-import DsaVideos from "./dsa"
+import webDevVideos from "./Webvideos";
+import Cybervideos from "./Cybervideos";
+import GeneralVideos from "./Generalvideos";
+import Onevideos from "./One";
+import UiVideos from "./uivideos";
+import CpVideos from "./cp";
+import DsaVideos from "./dsa";
 
 function VideoDetail() {
-  const { id } = useParams()
-  const navigate = useNavigate()
-  const { likeVideo, likedVideos } = useLiked()
-  const { watchVideo, WatchVideos } = useWatch([])
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { likeVideo, likedVideos } = useLiked();
+  const { watchVideo, WatchVideos } = useWatch([]);
 
-  const [showToast, setShowToast] = useState(false)
-  const [showMsg, setShowMsg] = useState(false)
+  const [showToast, setShowToast] = useState(false);
+  const [showMsg, setShowMsg] = useState(false);
 
   const allVideos = [
     ...webDevVideos,
@@ -34,33 +34,33 @@ function VideoDetail() {
     ...UiVideos,
     ...CpVideos,
     ...DsaVideos,
-  ]
+  ];
 
-  const currentIndex = allVideos.findIndex((v) => v.id.toString() === id)
-  const video = allVideos[currentIndex]
-  const prevVideo = allVideos[currentIndex - 1]
-  const nextVideo = allVideos[currentIndex + 1]
+  const currentIndex = allVideos.findIndex((v) => v.id.toString() === id);
+  const video = allVideos[currentIndex];
+  const prevVideo = allVideos[currentIndex - 1];
+  const nextVideo = allVideos[currentIndex + 1];
 
-  if (!video) return <div className="mt-20 text-center">Video not found</div>
+  if (!video) return <div className="mt-20 text-center">Video not found</div>;
 
-  const isLiked = likedVideos.some((v) => v.id === video.id)
-  const isWatched = WatchVideos.some((v) => v.id === video.id)
+  const isLiked = likedVideos.some((v) => v.id === video.id);
+  const isWatched = WatchVideos.some((v) => v.id === video.id);
 
   const handleLike = () => {
     if (!isLiked) {
-      likeVideo(video)
-      setShowToast(true)
-      setTimeout(() => setShowToast(false), 3000)
+      likeVideo(video);
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
     }
-  }
+  };
 
   const handleWatch = () => {
     if (!isWatched) {
-      watchVideo(video)
-      setShowMsg(true)
-      setTimeout(() => setShowMsg(false), 3000)
+      watchVideo(video);
+      setShowMsg(true);
+      setTimeout(() => setShowMsg(false), 3000);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-4 sm:py-6 lg:py-8">
@@ -85,7 +85,9 @@ function VideoDetail() {
               <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 leading-tight">
                 {video.title}
               </h2>
-              <p className="text-sm sm:text-base text-gray-600 mt-2 mb-4 sm:mb-6">{video.category}</p>
+              <p className="text-sm sm:text-base text-gray-600 mt-2 mb-4 sm:mb-6">
+                {video.category}
+              </p>
 
               {/* Like & Watch Later Buttons */}
               <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 lg:gap-6">
@@ -101,7 +103,9 @@ function VideoDetail() {
                     title="Like"
                   >
                     <FaThumbsUp className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span className="text-sm sm:text-base font-medium">{isLiked ? "Liked" : "Like"}</span>
+                    <span className="text-sm sm:text-base font-medium">
+                      {isLiked ? "Liked" : "Like"}
+                    </span>
                   </button>
 
                   <button
@@ -149,12 +153,14 @@ function VideoDetail() {
           {/* Related Videos */}
           <div className="w-full xl:w-80 2xl:w-96 mt-6 xl:mt-0">
             <div className="bg-white rounded-lg p-4 sm:p-6 shadow-sm xl:sticky xl:top-4">
-              <h3 className="font-semibold mb-4 text-lg sm:text-xl text-gray-900">More Videos</h3>
+              <h3 className="font-semibold mb-4 text-lg sm:text-xl text-gray-900">
+                More Videos
+              </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-4 xl:flex xl:flex-col xl:space-y-4 xl:gap-0 overflow-y-auto overflow-x-hidden max-h-[50vh] sm:max-h-[60vh] xl:max-h-[70vh] 2xl:max-h-[75vh] pb-2 pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
                 {[...allVideos]
-                  .filter((v) => v.id.toString() !== id)
-                  .sort(() => Math.random() - 0.5)
-                  .slice(0, 10)
+                  .filter((v) => v.id.toString() !== id) // Exclude current video
+                  .sort(() => Math.random() - 0.5) // Randomize
+                  .slice(0, 10) // Limit to 10
                   .map((v) => (
                     <div key={v.id} className="w-full flex-shrink-0">
                       <VideoCard video={v} />
@@ -172,7 +178,9 @@ function VideoDetail() {
           <div className="flex justify-between items-start">
             <div className="flex-1 pr-3">
               <p className="font-semibold text-gray-900">Notification</p>
-              <p className="mt-1 text-sm text-gray-600">👍 Added to your liked videos!</p>
+              <p className="mt-1 text-sm text-gray-600">
+                👍 Added to your liked videos!
+              </p>
             </div>
             <button
               onClick={() => setShowToast(false)}
@@ -190,7 +198,9 @@ function VideoDetail() {
           <div className="flex justify-between items-start">
             <div className="flex-1 pr-3">
               <p className="font-semibold text-gray-900">Notification</p>
-              <p className="mt-1 text-sm text-gray-600">⌚ Added to Watch Later!</p>
+              <p className="mt-1 text-sm text-gray-600">
+                ⌚ Added to Watch Later!
+              </p>
             </div>
             <button
               onClick={() => setShowMsg(false)}
@@ -202,7 +212,7 @@ function VideoDetail() {
         </div>
       )}
     </div>
-  )
+  );
 }
 
-export default VideoDetail
+export default VideoDetail;
